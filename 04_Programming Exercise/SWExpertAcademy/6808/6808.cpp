@@ -5,43 +5,82 @@
 #include <vector>
 #include <cstdio>
 
-bool isIncluded(std::vector<int> arr, int val)
+class Solver
 {
-    for (int i = 0; i < arr.size(); i++)
-        if (val == arr[i])
+  private:
+    std::vector<int> kyCards;
+    std::vector<int> iyCards;
+    std::vector<int> iyCardsOrdered;
+    int kyScore = 0;
+    int iyScore = 0;
+    int gameRound = 9;
+
+  public:
+    Solver();
+    void cardInit();
+    bool doesKyHave(int num);
+    int findKyWin();
+};
+
+Solver::Solver()
+{
+    kyCards.resize(9);
+    iyCards.resize(9);
+    iyCardsOrdered.resize(9, 0);
+    std::cout << "Initialized!" << std::endl;
+}
+
+void Solver::cardInit()
+{
+    for (int i = 0; i < 9; i++)
+        std::cin >> kyCards[i];
+
+    int idx = 0;
+    for (int num = 1; num <= 18; num++)
+        if (!doesKyHave(num))
+            iyCards[idx++] = num;
+}
+
+bool Solver::doesKyHave(int num)
+{
+    for (int i = 0; i < kyCards.size(); i++)
+        if (num == kyCards[i])
             return true;
     return false;
 }
 
-int findKyWin(std::vector<int> &kyCards, std::vector<int> &iyCards,
-              int kyScore, int iyScore, int gameRound)
+int Solver::findKyWin()
 {
     // std::cout << "checkpoint" << std::endl;
     if (gameRound == 0)
     {
-        if (iyScore < kyScore)
+        kyScore = iyScore = 0;
+        for (int i = 0; i < 9; i++)
+        {
+            if (kyCards[i] > iyCards[i])
+                kyScore += kyCards[i] + iyCards[i];
+            else
+                iyScore += kyCards[i] + iyCards[i];
+        }
+        if (kyScore > iyScore)
             return 1;
         else
             return 0;
     }
 
-    int kyNewScore = kyScore;
-    int iyNewScore = iyScore;
-
     int kyWin = 0;
     int iyCard;
     for (int i = 0; i < iyCards.size(); i++)
     {
-        if (iyCards[i] < 0)
+        if (iyCards[i] == 0)
             continue;
-        
-        if (kyCards[kyCards.size()-gameRound] < iyCards[i])
-            iyNewScore += kyCards[kyCards.size()-gameRound] + iyCards[i];
-        else if (iyCards[i] < kyCards[kyCards.size()-gameRound])
-            kyNewScore += kyCards[kyCards.size()-gameRound] + iyCards[i];
+
         iyCard = iyCards[i];
-        iyCards[i] = -1;
-        kyWin += findKyWin(kyCards, iyCards, kyNewScore, iyNewScore, gameRound - 1);
+        iyCardsOrdered[9 - gameRound] = iyCard;
+        iyCards[i] = 0;
+        --gameRound;
+        kyWin += findKyWin();
+        ++gameRound;
         iyCards[i] = iyCard;
     }
 
@@ -52,21 +91,16 @@ int main(void)
 {
     freopen("input.txt", "r", stdin);
     int tcCnt = 0, idx = 0, kyWin;
+    Solver solver;
     std::vector<int> kyCards(9);
     std::vector<int> iyCards(9);
     std::cin >> tcCnt;
 
     for (int tc = 1; tc <= tcCnt; tc++)
     {
-        for (int i = 0; i < 9; i++)
-            std::cin >> kyCards[i];
+        solver.cardInit();
 
-        idx = 0;
-        for (int num = 1; num <= 18; num++)
-            if (!isIncluded(kyCards, num))
-                iyCards[idx++] = num;
-        
-        int kyWin = findKyWin(kyCards, iyCards, 0, 0, 9);
+        int kyWin = solver.findKyWin();
         std::cout << "#" << tc << " " << kyWin << std::endl;
     }
 }
