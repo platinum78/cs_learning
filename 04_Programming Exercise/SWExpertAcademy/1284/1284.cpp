@@ -30,7 +30,11 @@ int tapWaterFare(int fareA, int baseB, int thresB, int fareB, int liters)
 int main(void)
 {
     int tcCnt;
+<<<<<<< HEAD
     int fareA, baseB, thresB, fareB, liters;
+=======
+    int fareA, int baseB, int thresB, int fareB, int liters;
+>>>>>>> 5fabc19129b67e54a0245e833081d305e778315e
     int minFare;
     std::cin >> tcCnt;
 
