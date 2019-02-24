@@ -24,7 +24,7 @@ int conv2D(std::vector< std::vector<char> >& largeMap, std::vector< std::vector<
             {
                 for (int w = 0; w < smallWidth; w++)
                 {
-                    if (smallMap[h][w] != largeMap[H+h][W+w])
+                    if (smallMap[h][w] ^ largeMap[H+h][W+w])
                     {
                         isIdentical = false;
                         break;
@@ -44,6 +44,7 @@ int conv2D(std::vector< std::vector<char> >& largeMap, std::vector< std::vector<
 
 int main(void)
 {
+    freopen("input.txt", "r", stdin);
     int tcCnt;
     int ekHeight, ekWidth, tHeight, tWidth;
     std::vector< std::vector<char> > ekPaint;
