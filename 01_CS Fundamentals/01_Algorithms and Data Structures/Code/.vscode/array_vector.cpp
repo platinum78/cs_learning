@@ -64,3 +64,4 @@ void ArrayVector::reserve(int N)
 {
     A = new Elem[N];
 }
+ß
