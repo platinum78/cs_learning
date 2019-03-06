@@ -51,19 +51,3 @@ void reverse_array(std::vector<int>& arr)
     while (i < j)
         inplace_swap(&arr[i++], &arr[j--]);
 }
-
-int main(void)
-{
-    std::vector<int> arr(9);
-    for (int i = 0; i < arr.size(); i++)
-    {
-        arr[i] = i + 1;
-        std::cout << arr[i] << " ";
-    }
-    std::cout << std::endl;
-
-    reverse_array(arr);
-    for (int i = 0; i < arr.size(); i++)
-        std::cout << arr[i] << " ";
-    std::cout << std::endl;
-}
