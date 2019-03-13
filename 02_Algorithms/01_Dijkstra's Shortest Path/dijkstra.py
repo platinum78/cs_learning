@@ -1,5 +1,5 @@
 from heapq import heapify, heappop
-from map import *
+from graph import *
 
 class DijkstraFinder:
     def __init__(self, graph):
@@ -13,7 +13,7 @@ class DijkstraFinder:
         self.node_dist = {}
         self.node_from = {}
     
-        for idx in range(node_cnt):
+        for idx in range(self.node_cnt):
             self.node_dist[self.graph.nodes[idx]] = 0xFFFFFFFF
             self.node_from[self.graph.nodes[idx]] = None
             self.node_list.append(self.graph.nodes[idx])
