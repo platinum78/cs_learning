@@ -1,29 +1,41 @@
-import math
+from heapq import heappush, heappop
 
 class Point:
     def __init__(self, x, y):
-        self.x = x
-        self.y = y
+        self.x, y = x, y
 
 class Parabola:
-    def __init__(self, focus_x, focus_y, x_left, x_right):
-        self.focus = Point(focus_x, focus_y)
-        self.x_left, self.x_right = x_left, x_right
+    def __init__(self, focus):
+        self.focus = focus
+        self.x_min = focus.x
+        self.x_max = focus.x
     
-    def calculate_parabola(self, sweepline_pos, x):
-        pass
+    def set_domain(self, x_min, x_max):
+        self.x_min, self.x_max = x_min, x_max
 
-class Edge:
+    def calculate(self, x, sweepline_pos):
+        return (x - self.focus.x)**2 / (2 * (self.focus.y - sweepline_pos)) \
+             + (self.focus.y + sweepline_pos) / 2
+
+class Line:
+    def __init__(self, p1, p2):
+        self.p1, self.p2 = p1, p2
+
+class BeachLine:
+    def __init__(self, focus):
+        self.beachline = []
+
+class SiteEvent:
+    def __init__(self, x=None, y=None):
+        self.pos = Point(x, y)
+        self.parabola = Parabola(self.pos)
+
+class CircleEvent:
+    def __init__(self, p1, p2, p3):
+        self.pos1 = p1
+        self.pos2 = p2
+        self.pos3 = p3
+
+class VoronoiMap:
     def __init__(self):
         pass
-
-class FortuneAlgorithm:
-    def __init__(self, field_width, field_height, point_set):
-        self.field_width = field_width
-        self.field_height = field_height
-        self.point_set = point_set
-        self.point_set = sorted(self.point_set, key=lambda x: x[1], reverse=True)
-        self.point_set = sorted(self.point_set, key=lambda x: x[0], reverse=True)
-    
-    def site_event(self):
-        
