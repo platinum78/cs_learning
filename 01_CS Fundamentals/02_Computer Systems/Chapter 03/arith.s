@@ -1,8 +1,8 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.build_version macos, 10, 14
-	.globl	_decode1                ## -- Begin function decode1
+	.globl	_arith                  ## -- Begin function arith
 	.p2align	4, 0x90
-_decode1:                               ## @decode1
+_arith:                                 ## @arith
 	.cfi_startproc
 ## %bb.0:
 	pushq	%rbp
@@ -14,19 +14,17 @@ _decode1:                               ## @decode1
 	movq	%rsi, -16(%rbp)
 	movq	%rdx, -24(%rbp)
 	movq	-8(%rbp), %rdx
-	movq	(%rdx), %rdx
+	xorq	-16(%rbp), %rdx
 	movq	%rdx, -32(%rbp)
-	movq	-24(%rbp), %rdx
-	movq	(%rdx), %rdx
-	movq	-8(%rbp), %rsi
-	movq	%rdx, (%rsi)
-	movq	-16(%rbp), %rdx
-	movq	(%rdx), %rdx
-	movq	-24(%rbp), %rsi
-	movq	%rdx, (%rsi)
+	imulq	$48, -24(%rbp), %rdx
+	movq	%rdx, -40(%rbp)
 	movq	-32(%rbp), %rdx
-	movq	-16(%rbp), %rsi
-	movq	%rdx, (%rsi)
+	andq	$252645135, %rdx        ## imm = 0xF0F0F0F
+	movq	%rdx, -48(%rbp)
+	movq	-40(%rbp), %rdx
+	subq	-48(%rbp), %rdx
+	movq	%rdx, -56(%rbp)
+	movq	-56(%rbp), %rax
 	popq	%rbp
 	retq
 	.cfi_endproc

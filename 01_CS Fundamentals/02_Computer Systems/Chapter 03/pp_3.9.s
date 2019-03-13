@@ -1,8 +1,8 @@
 	.section	__TEXT,__text,regular,pure_instructions
 	.build_version macos, 10, 14
-	.globl	_decode1                ## -- Begin function decode1
+	.globl	_shift_left4_rightn     ## -- Begin function shift_left4_rightn
 	.p2align	4, 0x90
-_decode1:                               ## @decode1
+_shift_left4_rightn:                    ## @shift_left4_rightn
 	.cfi_startproc
 ## %bb.0:
 	pushq	%rbp
@@ -12,21 +12,15 @@ _decode1:                               ## @decode1
 	.cfi_def_cfa_register %rbp
 	movq	%rdi, -8(%rbp)
 	movq	%rsi, -16(%rbp)
-	movq	%rdx, -24(%rbp)
-	movq	-8(%rbp), %rdx
-	movq	(%rdx), %rdx
-	movq	%rdx, -32(%rbp)
-	movq	-24(%rbp), %rdx
-	movq	(%rdx), %rdx
 	movq	-8(%rbp), %rsi
-	movq	%rdx, (%rsi)
-	movq	-16(%rbp), %rdx
-	movq	(%rdx), %rdx
-	movq	-24(%rbp), %rsi
-	movq	%rdx, (%rsi)
-	movq	-32(%rbp), %rdx
-	movq	-16(%rbp), %rsi
-	movq	%rdx, (%rsi)
+	shlq	$4, %rsi
+	movq	%rsi, -8(%rbp)
+	movq	-16(%rbp), %rcx
+	movq	-8(%rbp), %rsi
+                                        ## kill: def %cl killed %rcx
+	sarq	%cl, %rsi
+	movq	%rsi, -8(%rbp)
+	movq	-8(%rbp), %rax
 	popq	%rbp
 	retq
 	.cfi_endproc

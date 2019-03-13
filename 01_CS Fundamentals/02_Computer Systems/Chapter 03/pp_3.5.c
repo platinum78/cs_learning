@@ -1,7 +1,7 @@
-#define src_t  int
-#define dest_t char
-
-void convert(src_t x)
+void decode1(long *xp, long *yp, long *zp)
 {
-    dest_t y = x;
+    long buf = *xp;
+    *xp = *zp;
+    *zp = *yp;
+    *yp = buf;
 }
