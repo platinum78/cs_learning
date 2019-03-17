@@ -1,4 +1,4 @@
-from heapq import heapify, heappop
+from heapq import heapify, heappop, heappush
 from graph import *
 
 class DijkstraFinder:

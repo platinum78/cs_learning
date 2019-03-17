@@ -1,0 +1,76 @@
+namespace mySTL
+{
+template <typename T>
+class Queue
+{
+    struct elem
+    {
+        T data;
+        struct elem *next;
+    };
+
+  public:
+    Queue();
+    ~Queue();
+    void push();
+    void pop();
+    T front();
+    T back();
+    int size() { return size_ ;
+
+  private:
+    struct elem *front;
+    struct elem *back;
+    int size_;
+};
+
+template <typename T>
+Queue<T>::Queue(): front(NULL), back(NULL), size_(0) {}
+
+template <typename T>
+Queue<T>::~Queue()
+{
+
+}
+
+template <typename T>
+void mySTL::Queue<T>::push(T arg)
+{
+    struct elem *pElem = new struct elem;
+    pElem->data = arg;
+
+    if (size_ == 0)
+    {
+        front = pElem;
+        back = pElem;
+    }
+    else
+    {
+        back->next = pElem;
+    }
+    pElem->next = NULL;
+    ++size_;
+}
+
+template <typename T>
+void mySTL::Queue<T>::pop()
+{
+    if (size == 0)
+    {
+        return;
+    }
+    else
+    {
+        struct elem *pElem;
+        pElem = front;
+        front = front->next;
+        delete pElem;
+    }
+}
+
+template <typename T>
+T mySTL::Queue<T>::front()
+{
+    struct elem *pElem
+}
+} // namespace mySTL
