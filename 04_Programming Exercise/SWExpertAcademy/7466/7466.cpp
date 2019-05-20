@@ -1,41 +1,29 @@
 #include <iostream>
 #include <list>
-#include <cstdio>
-#include <cmath>
+#include <vector>
 
-#define MIN(X, Y) ( X < Y ? X : Y )
-#define MAX(X, Y) ( X > Y ? X : Y )
+#define MAX(X, Y)   (X > Y ? X : Y)
+#define MIN(X, Y)   (X < Y ? X : Y)
 
-struct prime
+typedef unsigned int uint32;
+
+struct Factor
 {
-    long num;
-    int population;
+    uint32 factor;
+    uint32 power;
 };
 
-prime *makeNewPrime(long num_, int population_)
+void expandFactorList(std::vector<uint32> &primes, uint32 upper_bound)
 {
-    prime *pPrime = new prime;
-    pPrime->num = num_;
-    pPrime->population = population_;
-    return pPrime;
-}
+    uint32 maxPrime = primes[primes.size() - 1];
+    bool isPrime = true;
 
-void factorize(std::list<prime*> &factor, int num_)
-{
-    factor.resize(0);
-    factor.push_back(makeNewPrime(1, 0));
-    long testNum = 2, num = num_, divnum = num_;
-    int population;
-    std::list<prime*>::iterator iter;
-    bool isPrime;
-
-    while (testNum * testNum < num)
+    maxPrime += (maxPrime % 2) + 1;
+    while (maxPrime <= upper_bound)
     {
-        isPrime = true;
-        iter = factor.begin(); iter++;
-        for (; iter != factor.end(); iter++)
+        for (int i = 0; i < primes.size(); i++)
         {
-            if (testNum % (*iter)->num == 0)
+            if (maxPrime % primes[i] == 0)
             {
                 isPrime = false;
                 break;
@@ -44,58 +32,60 @@ void factorize(std::list<prime*> &factor, int num_)
 
         if (isPrime)
         {
-            population = 0;
-            while (divnum % testNum == 0)
-            {
-                ++population;
-                divnum /= testNum;
-            }
-            if (population > 0)
-                factor.push_back(makeNewPrime(testNum, population));
+            primes.push_back(maxPrime);
+            break;
         }
 
-        ++testNum;
+        maxPrime += (maxPrime % 2) + 1;
+        isPrime = true;
     }
 
-    if (divnum > 1)
-        factor.push_back(makeNewPrime(divnum, 1));
+    for (int i = 0; i < primes.size(); i++)
+        std::cout << primes[i] << "  ";
+    std::cout << std::endl;
+}
+
+uint32 findGCD(std::vector<uint32> &primes, uint32 fact_, uint32 num_)
+{
+    uint32 fact = fact_;
+    uint32 num = num_;
+
+    // Factorize num
+    std::list<Factor> factors;
+    expandFactorList(primes, MAX(fact_, num_));
+    int idx = 0;
+    int power = 0;
+
+    while (num > 1)
+    {
+        power = 0;
+        while (num % primes[idx] == 0)
+        {
+            num /= primes[idx];
+            ++power;
+        }
+
+        if (power > 0)
+        {
+            Factor f;
+            f.factor = primes[idx];
+            f.power = power;
+            factors.push_back(f);
+        }
+
+        ++idx;
+    }
+
+    std::list<Factor>::iterator iter;
+    for (iter = factors.begin(); iter != factors.end(); iter++)
+        if ((*iter).power > 0)
+            std::cout << "Factor: " << (*iter).factor << ", Power: " << (*iter).power << std::endl;
 }
 
 int main(void)
 {
-    freopen("input.txt", "r", stdin);
-    std::list<prime*> factorK;
-    std::list<prime*> factorGCD;
+    std::vector<uint32> primes;
+    primes.push_back(2);
 
-    std::list<prime*>::iterator iterK;
-
-    int tcCnt, N, K, num;
-    long gcd;
-    std::cin >> tcCnt;
-    for (int tc = 1; tc <= tcCnt; tc++)
-    {
-        std::cin >> N >> K;
-        factorize(factorK, K);
-
-        gcd = 1;
-        for (int i = 2; i <= N; i++)
-        {
-            num = i;
-            iterK = factorK.begin();
-            iterK++;
-            for (; iterK != factorK.end(); iterK++)
-            {
-                while (num % (*iterK)->num == 0 && (*iterK)->population > 0 && num > 1)
-                {
-                    gcd *= (*iterK)->num;
-                    num /= (*iterK)->num;
-                    ((*iterK)->population)--;
-                    // std::cout << gcd << std::endl;
-                }
-            }
-        }
-        
-        std::cout << "#" << tc << " " << gcd << std::endl;
-    }
-    return 0;
+    findGCD(primes, 10, 10);
 }
