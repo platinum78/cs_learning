@@ -1,15 +1,7 @@
 3
-10 20
-feeoiwfjoawjwofeijwa
-oweifowafouiwaefoewi
-ieufioweuoriuwoeiruw
-othgiuobiuobfifoifod
-bioufoviuodfiewuodie
-bouboifuboifbufibuii
-eroeuroiwueoriwurriu
-eorpiweorieprowiepro
-bpobiopvfiofvsiuvyis
-eoriuweroiwepqweiopr
+2 5
+adbfc
+dcghi
 5 5
 bbbbb
 bbbbb
