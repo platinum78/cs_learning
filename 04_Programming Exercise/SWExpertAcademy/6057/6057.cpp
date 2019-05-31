@@ -1,58 +1,52 @@
 #include <cstdio>
-#include <vector>
+#include <memory.h>
+
+bool connections[51][51];
+
+void initConnections(void)
+{
+    for (int i = 0; i < 51; i++)
+        for (int j = 0; j < 51; j++)
+            connections[i][j] = false;
+}
+
+bool isConnected(int v1, int v2)
+{
+    return (connections[v1][v2] && connections[v2][v1]);
+}
 
 int main(void)
 {
     freopen("input.txt", "r", stdin);
 
-    std::vector< std::vector<int> > connections(51);
-    for (int i = 0; i < connections.size(); i++)
-    {
-        connections[i].resize(51);
-        for (int j = 0; j < connections[i].size(); j++)
-            connections[i][j] = 0;
-    }
-
-    int tcCnt, N, M;
-    int n1, n2, n3;
-    int trigCnt;
+    int tcCnt;
+    int vertexCnt, edgeCnt, trigCnt;
+    int v1, v2, v3;
     scanf("%d", &tcCnt);
 
     for (int tc = 1; tc <= tcCnt; tc++)
     {
-        scanf("%d %d", &N, &M);
-        if (N >= 3 && M >= 3)
+        scanf("%d %d", &vertexCnt, &edgeCnt);
+        for (int i = 0; i < edgeCnt; i++)
         {
-            for (int m = 0; m < M; m++)
-            {
-                scanf("%d %d", &n1, &n2);
-                connections[n1][n2] = 1;
-                connections[n2][n1] = 1;
-            }
-
-            trigCnt = 0;
-            for (int n1 = 1; n1 <= N - 2; n1++)
-            {
-                for (int n2 = n1 + 1; n2 <= N - 1; n2++)
-                {
-                    if (!connections[n1][n2])
-                        continue;
-                    for (int n3 = n2 + 1; n3 <= N; n3++)
-                        if (connections[n2][n3] && connections[n1][n3])
-                            ++trigCnt;
-                }
-            }
-            printf("#%d %d \n", tc, trigCnt);
-
-            for (int m = 0; m < M; m++)
-                connections[n1][n2] = false;
+            scanf("%d %d", &v1, &v2);
+            connections[v1][v2] = connections[v2][v1] = true;
         }
-        else
+        
+        trigCnt = 0;
+        for (v1 = 1; v1 <= vertexCnt - 2; v1++)
         {
-            printf("#%d 0 \n", tc);
+            for (v2 = v1 + 1; v2 <= vertexCnt - 1; v2++)
+            {
+                if (!isConnected(v1, v2))
+                    continue;
+                for (v3 = v2 + 1; v3 <= vertexCnt; v3++)
+                    if (isConnected(v2, v3) && isConnected(v1, v3))
+                        ++trigCnt;
+            }
         }
 
+        printf("#%d %d \n", tc, trigCnt);
+        initConnections();
     }
-
-    return 0;
 }
