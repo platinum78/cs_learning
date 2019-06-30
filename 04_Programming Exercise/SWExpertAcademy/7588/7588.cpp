@@ -1,95 +1,111 @@
 #include <cstdio>
-#include <memory.h>
+
+#define NONE 0
+#define ADD 1
+#define DEL 2
+#define MAX 3
 
 struct Operation
 {
-    int type;
-    int arg1;
-    int arg2;
+    int type_;
+    void *operation_;
 };
 
-Operation *operations[300001];
+Operation operations[300000];
+int opCnt = 0;
 
-void opType1(int op_ord)
+struct AddOper
 {
-    Operation *pOper = new Operation;
-    pOper->type = 1;
-    scanf("%d %d", &(pOper->arg1), &(pOper->arg2));
-    operations[op_ord] = pOper;
+    int a;
+    int b;
+};
+
+void addOperation(int a, int b)
+{
+    // printf("AddOper %d %d \n", a, b);
+    AddOper *pOper = new AddOper;
+    pOper->a = a;
+    pOper->b = b;
+    operations[opCnt].type_ = ADD;
+    operations[opCnt].operation_ = (void*)pOper;
+    opCnt++;
 }
 
-void opType2(int op_ord)
+void delOperation(int idx)
 {
-    Operation *pOper = new Operation;
-    pOper->type = 2;
-    int del_ord;
-    scanf("%d", &del_ord);
-    pOper->arg1 = del_ord;
-    pOper->arg2 = -1;
-    delete operations[del_ord];
-}
+    // printf("DelOper(%d) %d \n", idx, operations[idx].type_);
+    operations[opCnt].type_ = DEL;
+    operations[opCnt].operation_ = NULL;
+    ++opCnt;
 
-void opType3(int op_ord)
-{
-    Operation *pOper = new Operation;
-    pOper->type = 3;
-    int num; scanf("%ld", &num);
-    long testNum, maxNum = 0x8000000000000000;
-    int max_bound = op_ord - 1;
-    int numPairs = 0;
-    for (int i = 1; i <= max_bound; i++)
+    if (operations[idx].type_ == ADD)
     {
-        if (operations[i] != NULL && operations[i]->type == 1)
+        operations[idx].type_ = NONE;
+        delete (AddOper*)operations[idx].operation_;
+        operations[idx].operation_ = NULL;
+    }
+}
+
+void maxOperation(int x)
+{
+    // printf("MaxOper(%d) %d \n", x, opCnt);
+    operations[opCnt].type_ = MAX;
+    AddOper *pOper;
+    long maxNum = __LONG_MAX__ + 1;
+    long lineNum;
+    bool isEmpty = true;
+
+    for (int i = 0; i < opCnt; i++)
+    {
+        if (operations[i].type_ == ADD)
         {
-            ++numPairs;
-            testNum = operations[i]->arg1 * long(num) + operations[i]->arg2;
-            if (testNum > maxNum)
-                maxNum = testNum;
+            isEmpty = false;
+            pOper = (AddOper*)operations[i].operation_;
+            lineNum = pOper->a * x + pOper->b;
+            maxNum = (lineNum > maxNum ? lineNum : maxNum);
         }
     }
 
-    if (numPairs)
-        printf("%ld \n", maxNum);
-    else
+    if (isEmpty)
         printf("NO \n");
+    else
+        printf("%ld \n", maxNum);
+    
+    ++opCnt;
 }
 
 int main(void)
 {
     freopen("input.txt", "r", stdin);
 
-    for (int i = 0; i < 300001; i++)
-        operations[i] = NULL;
-
-    int tcCnt, opCnt, opType;
+    int tcCnt, tcOpCnt;
+    int opType, arg1, arg2;
     scanf("%d", &tcCnt);
-    
+
     for (int tc = 1; tc <= tcCnt; tc++)
     {
+        opCnt = 0;
         printf("#%d \n", tc);
-        scanf("%d", &opCnt);
 
-        for (int i = 1; i <= opCnt; i++)
+        scanf("%d", &tcOpCnt);
+        for (int op = 0; op < tcOpCnt; op++)
         {
             scanf("%d", &opType);
-            switch (opType)
+            if (opType == ADD)
             {
-            case 1:
-                opType1(i);
-                break;
-            case 2:
-                opType2(i);
-                break;
-            case 3:
-                opType3(i);
-                break;
-            };
-        }
-
-        for (int i = 1; i <= opCnt; i++)
-        {
-            delete operations[i];
-            operations[i] = NULL;
+                scanf("%d %d", &arg1, &arg2);
+                addOperation(arg1, arg2);
+            }
+            else if (opType == DEL)
+            {
+                scanf("%d", &arg1);
+                delOperation(arg1 - 1);
+            }
+            else
+            {
+                scanf("%d", &arg1);
+                maxOperation(arg1);
+            }
         }
     }
 }
