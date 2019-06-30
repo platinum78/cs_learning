@@ -1,32 +1,42 @@
 #include <cstdio>
+#include <memory.h>
 
-bool findMinOps_(int num, int ops_cnt, int *min_ops)
+int dp[1000001];
+
+int minOps(int num)
 {
     if (num == 1)
+        return 0;
+    
+    if (dp[num] == 0)
     {
-        if (ops_cnt < *min_ops)
-            *min_ops = ops_cnt;
-        return true;
-    }
+        int min_ops = __INT_MAX__;
+        int op = 0;
+        if (num % 3 == 0)
+        {
+            op = minOps(num / 3) + 1;
+            min_ops = (op < min_ops ? op : min_ops);
+        }
+        if (num % 2 == 0)
+        {
+            op = minOps(num / 2) + 1;
+            min_ops = (op < min_ops ? op : min_ops);
+        }
+        if (num > 1)
+        {
+            op = minOps(num - 1) + 1;
+            min_ops = (op < min_ops ? op : min_ops);
+        }
 
-    if (num % 3 == 0)
-        if (findMinOps_(num / 3, ops_cnt + 1, min_ops))
-            return true;
-    if (num % 2 == 0)
-        if (findMinOps_(num / 2, ops_cnt + 1, min_ops))
-            return true;
-    if (findMinOps_(num - 1, ops_cnt + 1, min_ops))
-        return true;
+        dp[num] = min_ops;
+    }
+    return dp[num];
 }
 
 int main(void)
 {
-    int opsCnt = __INT_MAX__;
-    int *pOpsCnt = &opsCnt;
+    memset(dp, '\0', 4000004);
     int num;
     scanf("%d", &num);
-
-    findMinOps_(num, 0, pOpsCnt);
-
-    printf("%d \n", opsCnt);
+    printf("%d \n", minOps(num));
 }
