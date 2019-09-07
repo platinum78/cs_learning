@@ -1,66 +1,50 @@
 #include <cstdio>
-#include <queue>
 
-struct GermState
+int s, t, a, b;
+
+int dfs()
 {
-    unsigned int num;
-    int day;
-};
-
-int minDays(unsigned int s, unsigned int t, unsigned int a, unsigned int b)
-{
-    unsigned int germCnt;
-    GermState germState;
-    std::queue<GermState> germStates;
-
+    int days = 0;
+    if (t < s) return -1;
     if (b == 1)
     {
-        if ((t - s) % a == 0)
-            return (t - s) / a;
-        else
+        if ((t - s) % b)
             return -1;
+        else
+            return (t - s) / b;
     }
-
-    germState.day = 0; germState.num = t;
-    germStates.push(germState);
-
-    while (!germStates.empty())
+    while (1)
     {
-        germState = germStates.front();
-        germStates.pop();
-        // printf("%d, %d \n", germState.day, germState.num);
-
-        if (germState.num == s)
-            return germState.day;
-        
-        ++(germState.day);
-        
-        if (germState.num % b == 0 && germState.num / b >= s)
+        if (t < s)
+            return -1;
+        if (t == s)
+            return days;
+        if (t % b == 0)
         {
-            germState.num /= b;
-            germStates.push(germState);
-            germState.num *= b;
+            t /= b;
+            if (t < s)
+            {
+                t *= b;
+                t -= a;
+            }
         }
-        
-        germState.num -= a;
-        if (germState.num >= s)
-            germStates.push(germState);
-        germState.num += a;
+        else
+            t -= a;
+        days++;
     }
-
-    return -1;
 }
 
 int main(void)
 {
     freopen("input.txt", "r", stdin);
-    unsigned int tcCnt;
-    unsigned int s, t, a, b;
-    scanf("%d", &tcCnt);
 
-    for (unsigned int tc = 1; tc <= tcCnt; tc++)
+    
+    int T, days;
+    scanf("%d", &T);
+
+    for (int tc = 1; tc <= T; tc++)
     {
-        scanf("%u %u %u %u", &s, &t, &a, &b);
-        printf("#%u %d \n", tc, minDays(s, t, a, b));
+        scanf("%d %d %d %d", &s, &t, &a, &b);
+        printf("#%d %d \n", tc, dfs());
     }
 }
