@@ -1,79 +1,45 @@
 #include <cstdio>
 #include <cctype>
-#include <vector>
 
-#define MAX(X, Y)   (X > Y ? X : Y)
+char map[20][20];
+int R, C, typeCnt, maxCnt;
+bool exists[26] = { false, };
+bool visited[26] = { false, };
+const int delta[4][2] = { {0, 1}, {0, -1}, {1, 0}, {-1, 0} };
 
-struct Point
+bool isInMap(int r, int c)
 {
-    int row;
-    int col;
-};
-
-bool isPointValid(int height, int width, Point &point)
-{
-    if (point.row < 0 || point.row >= height)
-        return false;
-    if (point.col < 0 || point.col >= height)
-        return false;
-    return true;
+    if (r >= 0 && r < R && c >= 0 && c < C)
+        return true;
+    return false;
 }
 
-int findBestTour_aux(std::vector< std::vector<int> > &island_map, std::vector<bool> &place_visited,
-                     Point &place, int place_cnt)
+void findMax(int r, int c, int cnt)
 {
-    if (place_visited[island_map[place.row][place.col]])
-        return place_cnt - 1;
-    
-    int height = island_map.size();
-    int width = island_map[0].size();
-    int maxPlaces = 0;
-    Point next;
-
-    // Test east.
-    next = { place.row, place.col + 1 };
-    if (isPointValid(height, width, next))
+    maxCnt = (maxCnt > cnt ? maxCnt : cnt);
+    if (maxCnt == typeCnt)
+        return;
+    for (int i = 0; i < 4; i++)
     {
-        place_visited[island_map[place.row][place.col]] = true;
-        maxPlaces = MAX(maxPlaces, findBestTour_aux(island_map, place_visited, next, place_cnt + 1));
-        place_visited[island_map[place.row][place.col]] = false;
-    }
+        int r_ = r + delta[i][0];
+        int c_ = c + delta[i][1];
+        int idx = map[r_][c_] - 'A';
 
-    // Test north.
-    next = { place.row - 1, place.col };
-    if (isPointValid(height, width, next))
-    {
-        place_visited[island_map[place.row][place.col]] = true;
-        maxPlaces = MAX(maxPlaces, findBestTour_aux(island_map, place_visited, next, place_cnt + 1));
-        place_visited[island_map[place.row][place.col]] = false;
+        if (isInMap(r_, c_) &&        // Index in map
+            !visited[idx])    // Not visited specific place
+        {
+            visited[idx] = true;
+            findMax(r_, c_, cnt + 1);
+            visited[idx] = false;
+        }
     }
-
-    // Test west.
-    next = { place.row, place.col - 1 };
-    if (isPointValid(height, width, next))
-    {
-        place_visited[island_map[place.row][place.col]] = true;
-        maxPlaces = MAX(maxPlaces, findBestTour_aux(island_map, place_visited, next, place_cnt + 1));
-        place_visited[island_map[place.row][place.col]] = false;
-    }
-
-    // Test south.
-    next = { place.row + 1, place.col };
-    if (isPointValid(height, width, next))
-    {
-        place_visited[island_map[place.row][place.col]] = true;
-        maxPlaces = MAX(maxPlaces, findBestTour_aux(island_map, place_visited, next, place_cnt + 1));
-        place_visited[island_map[place.row][place.col]] = false;
-    }
-
-    return maxPlaces;
 }
 
-int findBestTour(std::vector< std::vector<int> > &island_map)
+void init()
 {
-    std::vector<bool> placeVisited(26, false);
-    Point init = {0, 0};
-    return findBestTour_aux(island_map, placeVisited, init, 1);
+    for (int i = 0; i < 26; i++)
+        exists[i] = visited[i] = false;
+    typeCnt = maxCnt = 0;
 }
 
 int main(void)
@@ -82,28 +48,31 @@ int main(void)
     int tcCnt;
     char charBuf;
     scanf("%d", &tcCnt);
-    
-    int height, width;
-    std::vector< std::vector<int> > islandMap;
-    Point init;
-    
+
     for (int tc = 1; tc <= tcCnt; tc++)
     {
-        scanf("%d %d", &height, &width);
-        islandMap.resize(height);
-        for (int r = 0; r < islandMap.size(); r++)
+        init();
+        scanf("%d %d", &R, &C);
+
+        for (int r = 0; r < R; r++)
         {
-            islandMap[r].resize(width);
-            for (int c = 0; c < islandMap[r].size(); c++)
+            do
             {
-                do
-                {
-                    charBuf = getchar();
-                } while (!isalpha(charBuf));
-                islandMap[r][c] = int(charBuf) - int('A');
+                charBuf = getchar();
+            } while (!isupper(charBuf));
+            for (int c = 0; c < C; c++)
+            {
+                map[r][c] = charBuf;
+                exists[charBuf - 'A'] = true;
+                charBuf = getchar();
             }
         }
 
-        printf("#%d %d \n", tc, findBestTour(islandMap));
+        for (int i = 0; i < 26; i++)
+            if (exists[i])
+                ++typeCnt;
+        visited[map[0][0] - 'A'] = true;
+        findMax(0, 0, 1);
+        printf("#%d %d \n", tc, maxCnt);
     }
 }
