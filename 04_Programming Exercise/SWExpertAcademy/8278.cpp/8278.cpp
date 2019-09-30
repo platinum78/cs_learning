@@ -1,7 +1,7 @@
 #include <cstdio>
 #include <cmath>
 
-int cube(int n)
+long cube(long n)
 {
     return n * n * n;
 }
@@ -9,9 +9,9 @@ int cube(int n)
 int main(void)
 {
     freopen("input.txt", "r", stdin);
-    int s0 = 0, s1 = 1, s, start, iter;
-    int N, M, answer;
-    int *cache = new int[1000000];
+    long s0 = 0, s1 = 1, s, start, iter;
+    long N, M, answer;
+    long *cache = new long[1000000];
     int tcCnt;
     bool found;
     scanf("%d", &tcCnt);
@@ -19,7 +19,7 @@ int main(void)
     for (int tc = 1; tc <= tcCnt; tc++)
     {
         s0 = 0; s1 = 1;
-        scanf("%d %d", &N, &M);
+        scanf("%ld %ld", &N, &M);
         cache[0] = 0;
         cache[1] = s1 % M;
         
@@ -49,25 +49,29 @@ int main(void)
         }
         else
         {
-            iter = 2;
-            while (1)
-            {
-                s = (cube(s0) % M + cube(s1) % M) % M;
-                cache[iter] = s;
-                s0 = s1;
-                s1 = s;
-                ++iter;
-            }
+            // iter = 2;
+            // found = false;
+            // while (1)
+            // {
+            //     s = (cube(s0) % M + cube(s1) % M) % M;
+            //     cache[iter] = s;
+            //     s0 = s1;
+            //     s1 = s;
+            //     for (start = iter - 3; start >= 0; start--)
+            //         if (cache[iter - 1] == cache[start] && cache[iter] == cache[start + 1])
+            //         {
+            //             found = true;
+            //             break;
+            //         }
+            //     if (found)
+            //         break;
+            //     ++iter;
+            // }
 
-            for (start = 0; start < iter - 2; start++)
-                if (cache[iter - 1] == cache[start] && cache[iter] == cache[start + 1])
-                    break;
-
-            N -= start;
-            N %= (iter - start);
-            answer = cache[start + N];
-
+            // N -= start;
+            // N %= (iter - start);
+            // answer = cache[start + N];
         }
-        printf("#%d %d \n", tc, answer);
+        printf("#%d %ld \n", tc, answer);
     }
 }
