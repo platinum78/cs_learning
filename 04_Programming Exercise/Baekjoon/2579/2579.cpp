@@ -7,35 +7,14 @@ int stairs;
 
 int findScore(int pos, int single_steps)
 {
-    if (pos == stairs)
+    if (pos >= stairs)
+        return 0;
+    if (single_steps == 2)
         return 0;
 
     int globalScore = 0;
     
-    if (pos + 1 < stairs)
-    {
-        if (maxScores[pos + 1][0] == 0)
-            maxScores[pos + 1][0] = findScore(pos + 1, 0);
-        if (maxScores[pos + 1][1] == 0)
-            maxScores[pos + 1][1] = findScore(pos + 1, 1);
-    }
-    if (pos + 2 < stairs)
-    {
-        if (maxScores[pos + 2][0] == 0)
-            maxScores[pos + 2][0] = findScore(pos + 2, 0);
-        if (maxScores[pos + 2][1] == 0)
-            maxScores[pos + 2][1] = findScore(pos + 2, 1);
-    }
-
-    if (single_steps == 0)
-    {
-        globalScore = MAX(globalScore, maxScores[pos + 1][1]);
-        globalScore = MAX(globalScore, maxScores[pos + 2][0]);
-    }
-    else if (single_steps == 1)
-    {
-        globalScore = MAX(globalScore, maxScores[pos + 2][0]);
-    }
+    
 
     return globalScore;
 }
